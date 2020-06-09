@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Product } from '../product.interface';
+import { ActivatedRoute } from '@angular/router';
+import { ProductService } from '../product.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-detail',
@@ -10,9 +13,22 @@ export class ProductDetailComponent implements OnInit {
 
   @Input() product: Product;
 
-  constructor() { }
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private productService: ProductService
+  ) { }
 
   ngOnInit(): void {
+    let id = + this.activatedRoute.snapshot.params['id'];
+    this
+      .productService
+      .products$
+      .pipe(
+        map(products => products.find(p => p.id === id))
+      )
+      .subscribe(
+        p => this.product = p
+      );
   }
 
 }
