@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Product } from '../product.interface';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../product.service';
 import { map } from 'rxjs/operators';
 
@@ -15,8 +15,24 @@ export class ProductDetailComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private productService: ProductService
+    private productService: ProductService,
+    private router: Router
   ) { }
+
+  delete(id: number): void {
+    if(window.confirm('Are you sure ???')) {
+      this
+      .productService
+      .deleteProduct(id)
+      .subscribe(
+        () => {
+          console.log('Product deleted!');
+          this.productService.initProducts();
+          this.router.navigateByUrl('/products');
+        }
+      )
+    }
+  }
 
   ngOnInit(): void {
     let id = + this.activatedRoute.snapshot.params['id'];
